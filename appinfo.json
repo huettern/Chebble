@@ -1,0 +1,18 @@
+{
+    "versionLabel": "1.0",
+    "uuid": "4b94a346-bd30-4925-8734-330b3d675147",
+    "appKeys": {},
+    "longName": "Chebble",
+    "versionCode": 1,
+    "capabilities": [
+        ""
+    ],
+    "shortName": "Chebble",
+    "companyName": "noahhuetter@gmail.com",
+    "watchapp": {
+        "watchface": false
+    },
+    "resources": {
+        "media": []
+    }
+}
