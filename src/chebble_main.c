@@ -13,17 +13,34 @@ static char hide_text[] = "Hidden!";
 
 static const int vert_scroll_text_padding = 20;  //space on the bottom of the text layer when scrolling all way down
 
+static TextLayer *timeLayer; // The clock
+
+static GRect clockFrame = {.origin = {.x = 29, .y = 54}, .size = {.w = 144-40, .h = 168-54}};
+
+
+
+
+
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
   
-  //layer_add_child(window_layer, hide_cheat_layer);
+   APP_LOG(APP_LOG_LEVEL_DEBUG, "Long-Click");
 }
 
 static void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
   
-  //text_layer_destroy(hide_cheat_layer);
+   APP_LOG(APP_LOG_LEVEL_DEBUG, "Single-Click");
 }
 
 
+
+//builds the desired button handlers
+static void config_provider(Window *window) {
+  //const uint16_t repeat_interval_ms = 100;
+
+  window_single_click_subscribe(BUTTON_ID_SELECT, (ClickHandler) select_single_click_handler);
+  window_long_click_subscribe(BUTTON_ID_SELECT, 0, (ClickHandler) select_long_click_handler, NULL);
+  
+}
 
 
 
@@ -81,27 +98,7 @@ static void window_unload(Window *window) {
 }
 
 void handle_init(void) {
-  /*
-	// Create a window and text layer
-	window = window_create();
-	text_layer = text_layer_create(GRect(0, 0, 144, 168));
-	
-  //disable status bar
-  window_set_fullscreen(window, true);
-  
-	// Set the text, font, and text alignment
-  text_layer_set_background_color(text_layer, GColorBlack);
-  text_layer_set_text_color(text_layer, GColorWhite);
-	text_layer_set_text(text_layer, "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.");
-	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-	text_layer_set_text_alignment(text_layer, GTextAlignmentLeft);
-	
-  
-	// Add the text layer to the window
-	layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
-*/
-  
-  
+  // Create our app's base window
   window = window_create();
   
   //disable status bar
@@ -111,6 +108,10 @@ void handle_init(void) {
     .load = window_load,
     .unload = window_unload,
   });
+  
+  // Attach our desired button functionality
+  window_set_click_config_provider(window, (ClickConfigProvider) config_provider);
+  
   window_stack_push(window, true /* Animated */);
 }
 
@@ -122,7 +123,8 @@ void handle_deinit(void) {
 	window_destroy(window);
 }
 
-int main(void) {
+int main(void) {   
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App started");
 	handle_init();
 	app_event_loop();
   window_destroy(window);
