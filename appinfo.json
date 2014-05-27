@@ -1,17 +1,20 @@
 {
-    "versionLabel": "1.0",
-    "uuid": "4b94a346-bd30-4925-8734-330b3d675147",
-    "appKeys": {},
-    "longName": "Chebble",
-    "versionCode": 1,
-    "capabilities": [
-        ""
-    ],
     "shortName": "Chebble",
-    "companyName": "noahhuetter@gmail.com",
+    "longName": "Chebble",
+    "capabilities": [
+        "location",
+        "configurable"
+    ],
     "watchapp": {
         "watchface": false
     },
+    "versionLabel": "1.0",
+    "appKeys": {
+        "KEY_INVERT": 0
+    },
+    "companyName": "noahhuetter@gmail.com",
+    "versionCode": 1,
+    "uuid": "4b94a346-bd30-4925-8734-330b3d675147",
     "resources": {
         "media": []
     }

@@ -8,19 +8,21 @@ TextLayer *hide_cheat_layer;
 static ScrollLayer *scroll_layer;
 
 // Lorem ipsum to have something to scroll
-static char cheat_text[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam quam tellus, fermentu  m quis vulputate quis, vestibulum interdum sapien. Vestibulum lobortis pellentesque pretium. Quisque ultricies purus e  u orci convallis lacinia. Cras a urna mi. Donec convallis ante id dui dapibus nec ullamcorper erat egestas. Aenean a m  auris a sapien commodo lacinia. Sed posuere mi vel risus congue ornare. Curabitur leo nisi, euismod ut pellentesque se  d, suscipit sit amet lorem. Aliquam eget sem vitae sem aliquam ornare. In sem sapien, imperdiet eget pharetra a, lacin  ia ac justo. Suspendisse at ante nec felis facilisis eleifend.";
+//static char cheat_text[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam quam tellus, fermentu  m quis vulputate quis, vestibulum interdum sapien. Vestibulum lobortis pellentesque pretium. Quisque ultricies purus e  u orci convallis lacinia. Cras a urna mi. Donec convallis ante id dui dapibus nec ullamcorper erat egestas. Aenean a m  auris a sapien commodo lacinia. Sed posuere mi vel risus congue ornare. Curabitur leo nisi, euismod ut pellentesque se  d, suscipit sit amet lorem. Aliquam eget sem vitae sem aliquam ornare. In sem sapien, imperdiet eget pharetra a, lacin  ia ac justo. Suspendisse at ante nec felis facilisis eleifend.";
+static char cheat_text[] = "default";
+
+
 static char hide_text[] = "Hidden!";
 
-static const int vert_scroll_text_padding = 20;  //space on the bottom of the text layer when scrolling all way down
+static const int vert_scroll_text_padding = 168;  //space on the bottom of the text layer when scrolling all way down
 
 static TextLayer *timeLayer; // The clock
 
 static GRect clockFrame = {.origin = {.x = 29, .y = 54}, .size = {.w = 144-40, .h = 168-54}};
 
 
-
-
-
+#define KEY_INVERT 0
+  
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
   
    APP_LOG(APP_LOG_LEVEL_DEBUG, "Long-Click");
@@ -42,7 +44,34 @@ static void config_provider(Window *window) {
   
 }
 
-
+static void in_recv_handler(DictionaryIterator *iterator, void *context)
+{
+  //Get Tuple
+  Tuple *t = dict_read_first(iterator);
+  if(t)
+  {
+    switch(t->key)
+    {
+    case KEY_INVERT:
+      //It's the KEY_INVERT key
+      if(strcmp(t->value->cstring, "on") == 0)
+      {
+        //Set and save as inverted
+        text_layer_set_text(text_layer, "Inverted!");
+ 
+        persist_write_bool(KEY_INVERT, true);
+      }
+      else if(strcmp(t->value->cstring, "off") == 0)
+      {
+        //Set and save as not inverted
+        text_layer_set_text(text_layer, "Not inverted!");
+ 
+        persist_write_bool(KEY_INVERT, false);
+      }
+      break;
+    }
+  }
+}
 
 // Setup the scroll layer on window load
 // We do this here in order to be able to get the max used text size
@@ -111,6 +140,10 @@ void handle_init(void) {
   
   // Attach our desired button functionality
   window_set_click_config_provider(window, (ClickConfigProvider) config_provider);
+  
+  //for communication with config
+  app_message_register_inbox_received((AppMessageInboxReceived) in_recv_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   
   window_stack_push(window, true /* Animated */);
 }
